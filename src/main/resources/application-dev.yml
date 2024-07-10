@@ -1,0 +1,18 @@
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/likeliondb
+        username: root
+        password: 240311
+
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+
+jwt:
+    secretKey: 12345678901234567890123456789012
+    refreshKey: 12345678901234567890123456789012
