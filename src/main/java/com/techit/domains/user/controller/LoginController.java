@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
@@ -62,7 +64,7 @@ public class LoginController {
         cookieHelper.addCookie(response, "accessToken", accessToken);
 
         // 리프레시 토큰 쿠키 생성 및 설정
-        cookieHelper.addCookie(response, "accessToken", refreshToken);
+        cookieHelper.addCookie(response, "refreshToken", refreshToken);
 
         // 로그인 후 홈 페이지로 리다이렉트
         return "redirect:/";

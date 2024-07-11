@@ -42,7 +42,7 @@ public class User {
     @Column(nullable = false, name = "is_deactivated")
     private Boolean isDeactivated; // 탈퇴 여부
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Blog blog; // 블로그
 
     @Setter

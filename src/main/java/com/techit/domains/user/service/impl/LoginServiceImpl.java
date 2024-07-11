@@ -6,10 +6,12 @@ import com.techit.global.auth.jwt.entity.RefreshToken;
 import com.techit.global.auth.jwt.service.RefreshTokenService;
 import com.techit.global.auth.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {

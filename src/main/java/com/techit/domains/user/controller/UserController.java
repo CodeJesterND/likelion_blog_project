@@ -5,6 +5,7 @@ import com.techit.domains.blog.service.BlogService;
 import com.techit.domains.user.dto.UserRegisterDto;
 import com.techit.domains.user.entity.User;
 import com.techit.domains.user.service.UserService;
+import com.techit.global.exception.RegistrationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -46,15 +49,22 @@ public class UserController {
             User user = userService.registerUser(userRegisterDto);
 
             BlogCreateDto blogCreateDto = new BlogCreateDto();
-            blogCreateDto.setTitle(user.getNickname()+"'s 블로그");
+            blogCreateDto.setTitle(user.getNickname() + "'s 블로그");
             blogCreateDto.setUsername(user.getUsername());
 
             blogService.createBlog(blogCreateDto);
 
             return "redirect:/login-form";
-        }
-        catch (IllegalArgumentException e) {
-            model.addAttribute("registrationError", e.getMessage());
+        } catch (RegistrationException e) {
+            List<String> errors = e.getErrors();
+            for (String error : errors) {
+                if (error.contains("아이디")) {
+                    model.addAttribute("usernameError", error);
+                }
+                if (error.contains("이메일")) {
+                    model.addAttribute("emailError", error);
+                }
+            }
             return "user/user-register-form";
         }
     }
