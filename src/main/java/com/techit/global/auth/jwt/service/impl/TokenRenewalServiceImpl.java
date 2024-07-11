@@ -28,7 +28,7 @@ public class TokenRenewalServiceImpl implements TokenRenewalService {
         // refreshToken이 유효하지 않거나 만료된 경우
         if (jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
 
-            // refreshToken과 accessToken 쿠키를 삭제
+            // refreshToken 쿠키를 삭제
             cookieHelper.deleteCookie(response, "refreshToken");
 
             // refreshToken이 데이터베이스에 존재하면 삭제

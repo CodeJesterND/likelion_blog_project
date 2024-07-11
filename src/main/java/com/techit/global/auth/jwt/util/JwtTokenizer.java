@@ -1,8 +1,8 @@
 package com.techit.global.auth.jwt.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +11,7 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 @Component
 public class JwtTokenizer {
 
@@ -22,7 +23,7 @@ public class JwtTokenizer {
     // 리프레시 토큰 만료 시간 설정 (7일)
     public static Long REFRESH_TOKEN_EXPIRE_COUNT = 7 * 24 * 60 * 60 * 1000L;
 
-    // 생성자: 주입된 시크릿 키 값을 UTF-8 바이트 배열로 변환
+    // 주입된 시크릿 키 값을 UTF-8 바이트 배열로 변환
     public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecret,
                         @Value("${jwt.refreshKey}") String refreshSecret) {
 
@@ -76,14 +77,25 @@ public class JwtTokenizer {
 
     // 토큰 파싱 메서드
     public Claims parseToken(String token, byte[] secretKey){
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey(secretKey))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey(secretKey))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            System.out.println("Token is expired: " + e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            System.out.println("Unsupported JWT: " + e.getMessage());
+        } catch (MalformedJwtException e) {
+            System.out.println("Malformed JWT: " + e.getMessage());
+        } catch (SignatureException e) {
+            System.out.println("Invalid signature: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Token is empty or null: " + e.getMessage());
+        }
+        return null;
     }
-
-
 
     // 액세스 토큰 파싱 메서드
     public Claims parseAccessToken(String accessToken) {
@@ -96,12 +108,12 @@ public class JwtTokenizer {
     }
 
     // 주어진 JWT 토큰에서 사용자 ID를 추출하는 메서드
-    public Long getUserIdFromToken(String token){
-        String[] tokenArr = token.split(" ");
-        token = tokenArr[1];
-        Claims claims = parseToken(token, accessSecret);
-        return Long.valueOf((Integer)claims.get("userId"));
-    }
+//    public Long getUserIdFromToken(String token){
+//        String[] tokenArr = token.split(" ");
+//        token = tokenArr[1];
+//        Claims claims = parseToken(token, accessSecret);
+//        return Long.valueOf((Integer)claims.get("userId"));
+//    }
 
     // 토큰 만료 여부 확인 메서드
     public boolean isTokenExpired(String token, byte[] secretKey) {

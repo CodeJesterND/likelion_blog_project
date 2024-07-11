@@ -33,7 +33,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityLoginFilterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(request -> request
                         // 특정 요청 경로에 대해 인증을 허용하지 않음
-                        .requestMatchers("/", "/user/register", "/login", "/logout", "/login-form").permitAll()
+                        .requestMatchers("/", "/users/register", "/login", "/logout", "/login-form").permitAll()
                         .requestMatchers("/blog/@**").permitAll()
                         .requestMatchers("/css/**").permitAll()
                         // 나머지 모든 요청은 인증이 필요함

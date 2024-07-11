@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -46,6 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 // 토큰을 통해 인증을 설정
                 getAuthentication(token);
+
             } catch (ExpiredJwtException e) {
                 // 토큰이 만료된 경우 refreshToken을 이용해 accessToken을 갱신
                 String newAccessToken = tokenRenewalService.reissueAccessToken(response, getToken(request, "refreshToken"));
@@ -84,11 +87,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void getAuthentication(String token) {
         // 토큰을 파싱하여 클레임을 추출
         Claims claims = jwtTokenizer.parseAccessToken(token);
-        String email = claims.getSubject();
 
+        String email = claims.getSubject();
         Long userId = claims.get("userId", Long.class);
         String name = claims.get("name", String.class);
         String username = claims.get("username", String.class);
+
         List<GrantedAuthority> authorities = getGrantedAuthorities(claims);
         Long blogId = claims.get("blogId", Long.class);
 
